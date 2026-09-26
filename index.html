@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Shopee — Katalog Produk</title>
+<link rel="stylesheet" href="catalog.css">
+</head>
+<body>
+
+  <!-- navbar-->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html">Mini<span>Shopee</span></a>
+
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Cari produk atau kategori...">
+      </div>
+
+      <div class="user-area">
+        <button id="cartToggleBtn" class="cart-pill" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="cartDrawer">
+          <span>Keranjang</span>
+          <span id="cartCount" class="cart-count">0</span>
+        </button>
+        <div class="greeting">Halo, <strong id="userName">Pengguna</strong></div>
+        <button id="logoutBtn" class="btn-ghost">Keluar</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== CART DRAWER ===== -->
+  <div id="cartOverlay" class="cart-overlay" hidden></div>
+  <aside id="cartDrawer" class="cart-drawer" hidden aria-label="Keranjang belanja">
+    <div class="cart-drawer-header">
+      <h2>Keranjang Belanja</h2>
+      <button id="cartCloseBtn" class="cart-close-btn" type="button" aria-label="Tutup keranjang">&times;</button>
+    </div>
+
+    <div id="cartItemsList" class="cart-items-list">
+      <!-- baris item keranjang dirender oleh catalog.js -->
+    </div>
+
+    <p id="cartEmptyMessage" class="cart-empty-message" hidden>Keranjang kamu masih kosong.</p>
+
+    <div class="cart-drawer-footer">
+      <div class="cart-total-row">
+        <span>Total</span>
+        <span id="cartTotal" class="cart-total-value">$0.00</span>
+      </div>
+      <button id="cartClearBtn" class="btn-outline cart-clear-btn" type="button">Kosongkan Keranjang</button>
+    </div>
+  </aside>
+
+  <!-- filter bar-->
+  <section class="controls-bar">
+    <div class="controls-left">
+      <select id="categoryFilter" class="control-select">
+        <option value="all">Semua kategori</option>
+      </select>
+
+      <select id="sortSelect" class="control-select">
+        <option value="default">Urutkan</option>
+        <option value="price-asc">Harga: termurah</option>
+        <option value="price-desc">Harga: termahal</option>
+        <option value="rating-desc">Rating tertinggi</option>
+        <option value="rating-asc">Rating terendah</option>
+      </select>
+    </div>
+
+    <div id="resultsCount" class="results-count"></div>
+  </section>
+
+  <!-- state message -->
+  <div id="statusMessage" class="status-message" hidden></div>
+
+  <!-- product grid-->
+  <main id="productGrid" class="product-grid" aria-live="polite"></main>
+
+  <!-- load more -->
+  <div class="load-more-wrap">
+    <button id="loadMoreBtn" class="btn-outline" hidden>Muat lebih banyak</button>
+  </div>
+
+  <script src="catalog.js" defer></script>
+</body>
+</html>

@@ -87,4 +87,46 @@
 
   <script src="catalog.js" defer></script>
 </body>
+</html><!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - ITS Merch</title>
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+
+  <div class="login-container">
+    <h1>ITS Merch</h1>
+    <p class="subtitle">ITS Merchandise online store</p>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="Masukkan username" required />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Masukkan password" required />
+      </div>
+
+      <!-- error, defaultnya sembunyi -->
+      <p id="errorMessage" class="error-message"></p>
+
+      <!-- pesan loading, defaultnya sembunyi -->
+      <p id="loadingMessage" class="loading-message">Sedang memeriksa akun...</p>
+
+      <button type="submit" id="loginButton">Login</button>
+    </form>
+
+    <p class="hint">
+      username: ITS & password: 10nop
+      (dummy)
+    </p>
+  </div>
+
+  <script src="login.js" defer></script>
+</body>
 </html>

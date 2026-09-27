@@ -9,6 +9,15 @@
 
    Nilainya string biasa (bukan JSON), jadi di sini
    tidak perlu JSON.parse.
+
+   ---------------------------------------------------------
+   Update:
+   - Load More / Pagination: sudah pakai array slicing (tetap).
+   - Detail Produk Modal: dibangun via Event Delegation,
+     satu listener di productGridEl untuk semua kartu.
+   - Global Error Handling: status message punya tipe
+     (loading/error) + tombol "Coba Lagi", plus jaring
+     pengaman window.onerror / unhandledrejection.
    ========================================================= */
 
 (function () {
@@ -284,9 +293,14 @@
     return original;
   }
 
+  // Kartu produk tidak lagi punya listener sendiri-sendiri.
+  // Klik tombol "Tambah ke Keranjang" maupun klik kartu untuk
+  // membuka modal, keduanya ditangani lewat Event Delegation
+  // di productGridEl (lihat handleGridClick di bawah).
   function buildCard(product) {
     const card = document.createElement("article");
     card.className = "product-card";
+    card.dataset.id = product.id; // dipakai handleGridClick untuk cari produknya lagi
 
     const hasDiscount = product.discountPercentage > 0.5;
     const original = originalPriceFrom(product.price, product.discountPercentage);
@@ -319,28 +333,17 @@
       </div>
     `;
 
-    const addBtn = card.querySelector(".add-cart-btn");
-    addBtn.addEventListener("click", function () {
-      addToCart(product);
-      addBtn.textContent = "Ditambahkan";
-      addBtn.classList.add("added");
-      setTimeout(() => {
-        addBtn.textContent = "Tambah ke Keranjang";
-        addBtn.classList.remove("added");
-      }, 1200);
-    });
-
     return card;
   }
 
   function renderGrid() {
     const filtered = getFilteredProducts();
-    const slice = filtered.slice(0, visibleCount);
+    const slice = filtered.slice(0, visibleCount); // <-- teknik array slicing (Load More)
 
     productGridEl.innerHTML = "";
 
     if (filtered.length === 0) {
-      showStatus("Tidak ada produk yang cocok dengan pencarian/filter ini.");
+      showStatus("Tidak ada produk yang cocok dengan pencarian/filter ini.", "empty");
       loadMoreBtn.hidden = true;
       resultsCountEl.textContent = "0 produk";
       return;
@@ -356,14 +359,138 @@
     loadMoreBtn.hidden = slice.length >= filtered.length;
   }
 
-  function showStatus(message) {
-    statusMessageEl.textContent = message;
+  // type: "loading" | "error" | "empty" (default netral)
+  // options.retry: kalau diisi fungsi, tombol "Coba Lagi" akan muncul
+  function showStatus(message, type, options) {
+    options = options || {};
+    statusMessageEl.innerHTML = "";
+    statusMessageEl.className = "status-message" + (type ? " " + type : "");
+
+    const text = document.createElement("span");
+    text.textContent = message;
+    statusMessageEl.appendChild(text);
+
+    if (options.retry) {
+      const retryBtn = document.createElement("button");
+      retryBtn.type = "button";
+      retryBtn.className = "status-retry-btn";
+      retryBtn.textContent = "Coba Lagi";
+      retryBtn.addEventListener("click", options.retry);
+      statusMessageEl.appendChild(retryBtn);
+    }
+
     statusMessageEl.hidden = false;
   }
 
   function hideStatus() {
     statusMessageEl.hidden = true;
+    statusMessageEl.innerHTML = "";
   }
+
+  // ---------------------------------------------------------
+  // 7b. Detail Produk Modal
+  // ---------------------------------------------------------
+  let activeModalOverlay = null;
+
+  function openProductModal(product) {
+    closeProductModal(); // jaga-jaga kalau ada modal lama masih nyangkut
+
+    const overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    overlay.innerHTML = `
+      <div class="modal-box" role="dialog" aria-modal="true" aria-label="Detail produk">
+        <button class="modal-close" type="button" aria-label="Tutup">&times;</button>
+        <div class="modal-content">
+          <div class="modal-img-wrap">
+            <img src="${product.thumbnail}" alt="${product.title}">
+          </div>
+          <div class="modal-info">
+            <span class="category-pill">${product.category}</span>
+            <h2 class="modal-title">${product.title}</h2>
+            <div class="modal-meta-row">
+              <span>Brand: <strong>${product.brand || "-"}</strong></span>
+              <span class="rating-row"><span class="star">&#9733;</span> ${product.rating.toFixed(1)}</span>
+            </div>
+            <div class="modal-price">${formatPrice(product.price)}</div>
+            <span class="modal-stock ${product.stock > 0 ? "in-stock" : "out-of-stock"}">
+              ${product.stock > 0 ? product.stock + " stok tersedia" : "Stok habis"}
+            </span>
+            <p class="modal-desc">${product.description || "Tidak ada deskripsi."}</p>
+            <button class="add-cart-btn modal-add-btn" type="button"${product.stock <= 0 ? " disabled" : ""}>
+              ${product.stock > 0 ? "Tambah ke Keranjang" : "Stok Habis"}
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+    document.body.style.overflow = "hidden";
+    activeModalOverlay = overlay;
+
+    overlay.addEventListener("click", function (event) {
+      if (event.target === overlay || event.target.closest(".modal-close")) {
+        closeProductModal();
+        return;
+      }
+      const addBtn = event.target.closest(".modal-add-btn");
+      if (addBtn && !addBtn.disabled) {
+        addToCart(product);
+        addBtn.textContent = "Ditambahkan";
+        setTimeout(closeProductModal, 500);
+      }
+    });
+
+    document.addEventListener("keydown", handleModalEscape);
+  }
+
+  function handleModalEscape(event) {
+    if (event.key === "Escape") closeProductModal();
+  }
+
+  function closeProductModal() {
+    if (activeModalOverlay) {
+      activeModalOverlay.remove();
+      activeModalOverlay = null;
+    }
+    document.body.style.overflow = "";
+    document.removeEventListener("keydown", handleModalEscape);
+  }
+
+  // ---------------------------------------------------------
+  // 7c. Event Delegation — satu listener untuk semua kartu produk
+  //     (kartu selalu dibangun ulang tiap renderGrid, jadi
+  //     listener per-kartu akan sia-sia; delegation di parent
+  //     yang statis (#productGrid) jauh lebih efisien).
+  // ---------------------------------------------------------
+  function handleGridClick(event) {
+    const addBtn = event.target.closest(".add-cart-btn");
+    if (addBtn) {
+      event.stopPropagation();
+      const card = addBtn.closest(".product-card");
+      const productId = Number(card.dataset.id);
+      const product = masterProducts.find((p) => p.id === productId);
+      if (!product) return;
+
+      addToCart(product);
+      addBtn.textContent = "Ditambahkan";
+      addBtn.classList.add("added");
+      setTimeout(() => {
+        addBtn.textContent = "Tambah ke Keranjang";
+        addBtn.classList.remove("added");
+      }, 1200);
+      return;
+    }
+
+    const card = event.target.closest(".product-card");
+    if (card) {
+      const productId = Number(card.dataset.id);
+      const product = masterProducts.find((p) => p.id === productId);
+      if (product) openProductModal(product);
+    }
+  }
+
+  productGridEl.addEventListener("click", handleGridClick);
 
   // ---------------------------------------------------------
   // 8. Populate the category dropdown from the fetched data
@@ -410,10 +537,12 @@
   });
 
   // ---------------------------------------------------------
-  // 10. Fetch products dynamically
+  // 10. Fetch products dynamically + Global Error Handling
   // ---------------------------------------------------------
   async function loadProducts() {
-    showStatus("Memuat produk...");
+    showStatus("Memuat produk...", "loading");
+    loadMoreBtn.hidden = true;
+
     try {
       // Step 1: a cheap request just to learn the real total count
       const countResponse = await fetch("https://dummyjson.com/products?limit=1");
@@ -433,20 +562,35 @@
       masterProducts = Array.isArray(data.products) ? data.products : [];
 
       if (masterProducts.length === 0) {
-        showStatus("Tidak ada produk yang tersedia saat ini.");
+        showStatus("Tidak ada produk yang tersedia saat ini.", "empty");
         return;
       }
 
       populateCategoryFilter(masterProducts);
       renderGrid();
     } catch (err) {
+      // Global error handling untuk kegagalan fetch: pesan visual + tombol coba lagi
+      masterProducts = [];
+      productGridEl.innerHTML = "";
+      resultsCountEl.textContent = "";
       showStatus(
-        "Terjadi kesalahan saat memuat produk. Periksa koneksi Anda dan muat ulang halaman."
+        "Terjadi kesalahan saat memuat produk. Periksa koneksi Anda lalu coba lagi.",
+        "error",
+        { retry: loadProducts }
       );
       // eslint-disable-next-line no-console
       console.error(err);
     }
   }
+
+  // Jaring pengaman tambahan untuk error tak terduga di luar try/catch
+  // di atas (mis. error rendering, promise lain yang tidak ditangani).
+  window.addEventListener("error", function (event) {
+    console.error("Unhandled error:", event.error || event.message);
+  });
+  window.addEventListener("unhandledrejection", function (event) {
+    console.error("Unhandled promise rejection:", event.reason);
+  });
 
   loadProducts();
 })();

@@ -1,26 +1,34 @@
 /* =========================================================
    Mini Shopee — Catalog stylesheet
-   Palette: deep pine header, ochre CTA, brick sale tags,
-   sage-tinted paper background. Pure CSS, no framework.
+   THEME: Summer Picnic 🧺
+   Palette: grass green header, mustard CTA, tomato-red accents,
+   warm cream paper background, gingham ribbon under the navbar.
+   Pure CSS, no framework. Struktur/selector TIDAK diubah dari
+   versi sebelumnya — hanya nilai visualnya yang di-reskin.
    ========================================================= */
 
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap');
+
 :root{
-  --bg: #EEF2EE;
+  --bg: #FBF4E6;
   --surface: #FFFFFF;
-  --ink: #1B1F1D;
-  --ink-soft: #5B6660;
-  --line: #DDE4DD;
+  --ink: #2B2118;
+  --ink-soft: #8A7860;
+  --line: #EAD9C2;
 
-  --pine: #1F4B43;
-  --pine-dark: #163831;
-  --ochre: #C98A2B;
-  --ochre-dark: #A56F1F;
-  --brick: #B23A48;
-  --star: #C98A2B;
+  --grass: #3F7D3A;
+  --grass-dark: #2A5B27;
+  --mustard: #E8A33D;
+  --mustard-dark: #C9822A;
+  --tomato: #C1272D;
+  --tomato-dark: #96181D;
+  --star: #E8A33D;
 
-  --radius-card: 14px;
+  --font-display: "Baloo 2", "Segoe UI", -apple-system, sans-serif;
+
+  --radius-card: 16px;
   --radius-pill: 999px;
-  --shadow-card: 0 1px 2px rgba(20, 30, 25, 0.06), 0 6px 16px rgba(20, 30, 25, 0.05);
+  --shadow-card: 0 2px 4px rgba(94, 62, 27, 0.08), 0 10px 26px rgba(94, 62, 27, 0.12);
 }
 
 *{ box-sizing: border-box; }
@@ -28,10 +36,21 @@
 html, body{
   margin: 0;
   padding: 0;
-  background: var(--bg);
   color: var(--ink);
   font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.4;
+}
+
+body{
+  background-color: var(--bg);
+  /* pola gingham sangat samar di seluruh halaman, kesan taplak piknik */
+  background-image:
+    linear-gradient(45deg, rgba(193, 39, 45, 0.05) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(193, 39, 45, 0.05) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(193, 39, 45, 0.05) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(193, 39, 45, 0.05) 75%);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
 }
 
 a{ text-decoration: none; color: inherit; }
@@ -39,11 +58,25 @@ button{ font-family: inherit; }
 
 /* ---------- Topbar ---------- */
 .topbar{
-  background: var(--pine);
+  background: linear-gradient(135deg, var(--grass) 0%, var(--grass-dark) 100%);
   color: #fff;
   position: sticky;
   top: 0;
   z-index: 20;
+}
+
+/* pita gingham tipis sebagai "bingkai" di bawah navbar */
+.topbar::after{
+  content: "";
+  display: block;
+  height: 8px;
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--tomato) 0,
+    var(--tomato) 10px,
+    var(--bg) 10px,
+    var(--bg) 20px
+  );
 }
 
 .topbar-inner{
@@ -56,13 +89,14 @@ button{ font-family: inherit; }
 }
 
 .brand{
-  font-size: 20px;
+  font-family: var(--font-display);
+  font-size: 22px;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   white-space: nowrap;
   flex-shrink: 0;
 }
-.brand span{ color: var(--ochre); }
+.brand span{ color: var(--mustard); }
 
 .search-wrap{
   flex: 1;
@@ -74,7 +108,7 @@ button{ font-family: inherit; }
 .search-icon{
   position: absolute;
   left: 14px;
-  color: var(--pine-dark);
+  color: var(--grass-dark);
   opacity: 0.55;
   pointer-events: none;
 }
@@ -83,12 +117,12 @@ button{ font-family: inherit; }
   padding: 10px 14px 10px 40px;
   border-radius: var(--radius-pill);
   border: none;
-  background: #fff;
+  background: var(--bg);
   color: var(--ink);
   font-size: 14px;
 }
 #searchInput:focus{
-  outline: 3px solid rgba(201, 138, 43, 0.55);
+  outline: 3px solid rgba(232, 163, 61, 0.6);
   outline-offset: 1px;
 }
 
@@ -104,13 +138,13 @@ button{ font-family: inherit; }
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.16);
   padding: 8px 14px;
   border-radius: var(--radius-pill);
 }
 .cart-count{
-  background: var(--ochre);
-  color: var(--pine-dark);
+  background: var(--mustard);
+  color: var(--grass-dark);
   font-weight: 700;
   font-size: 12px;
   min-width: 18px;
@@ -123,11 +157,11 @@ button{ font-family: inherit; }
 }
 
 .greeting{ white-space: nowrap; }
-.greeting strong{ color: var(--ochre); }
+.greeting strong{ color: var(--mustard); }
 
 .btn-ghost{
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.4);
+  border: 1px solid rgba(255,255,255,0.45);
   color: #fff;
   padding: 8px 16px;
   border-radius: var(--radius-pill);
@@ -135,14 +169,14 @@ button{ font-family: inherit; }
   font-size: 14px;
   transition: background 0.15s ease;
 }
-.btn-ghost:hover{ background: rgba(255,255,255,0.14); }
-.btn-ghost:focus-visible{ outline: 3px solid var(--ochre); outline-offset: 2px; }
+.btn-ghost:hover{ background: rgba(255,255,255,0.18); }
+.btn-ghost:focus-visible{ outline: 3px solid var(--mustard); outline-offset: 2px; }
 
 /* ---------- Controls bar ---------- */
 .controls-bar{
   max-width: 1280px;
   margin: 0 auto;
-  padding: 18px 24px 8px;
+  padding: 20px 24px 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -166,7 +200,7 @@ button{ font-family: inherit; }
   cursor: pointer;
 }
 .control-select:focus-visible{
-  outline: 3px solid rgba(201, 138, 43, 0.5);
+  outline: 3px solid rgba(232, 163, 61, 0.55);
   outline-offset: 1px;
 }
 
@@ -184,6 +218,41 @@ button{ font-family: inherit; }
   color: var(--ink-soft);
   font-size: 15px;
 }
+
+.status-message.loading{
+  color: var(--grass-dark);
+  font-weight: 600;
+}
+
+.status-message.error{
+  background: #FBE7E5;
+  color: var(--tomato-dark);
+  border: 1px solid #F0BFBB;
+  border-radius: 10px;
+  margin-left: 24px;
+  margin-right: 24px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.status-retry-btn{
+  background: var(--tomato);
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+.status-retry-btn:hover{ background: var(--tomato-dark); }
+.status-retry-btn:focus-visible{ outline: 3px solid var(--tomato); outline-offset: 2px; }
 
 /* ---------- Product grid ---------- */
 .product-grid{
@@ -203,32 +272,44 @@ button{ font-family: inherit; }
   display: flex;
   flex-direction: column;
   position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.product-card:hover{
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(94, 62, 27, 0.1), 0 16px 32px rgba(94, 62, 27, 0.16);
 }
 
 .card-media{
   position: relative;
   aspect-ratio: 1 / 1;
-  background: #F5F7F4;
+  background: #FBEEDD;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 .card-media img{
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.product-card:hover .card-media img{
+  transform: scale(1.06);
 }
 
 .discount-tag{
   position: absolute;
   top: 10px;
   left: 10px;
-  background: var(--brick);
+  background: var(--tomato);
   color: #fff;
   font-size: 12px;
   font-weight: 700;
   padding: 4px 8px;
   border-radius: 6px;
+  z-index: 1;
 }
 
 .card-body{
@@ -241,9 +322,10 @@ button{ font-family: inherit; }
 
 .category-pill{
   align-self: flex-start;
-  background: #EAF0E9;
-  color: var(--pine);
+  background: #FCEBD1;
+  color: var(--mustard-dark);
   font-size: 11px;
+  font-weight: 600;
   padding: 3px 9px;
   border-radius: var(--radius-pill);
 }
@@ -269,7 +351,7 @@ button{ font-family: inherit; }
 .price-current{
   font-size: 16px;
   font-weight: 700;
-  color: var(--pine-dark);
+  color: var(--tomato);
 }
 .price-original{
   font-size: 12.5px;
@@ -288,7 +370,7 @@ button{ font-family: inherit; }
 
 .add-cart-btn{
   margin-top: 10px;
-  background: var(--ochre);
+  background: var(--mustard);
   color: #fff;
   border: none;
   padding: 10px 12px;
@@ -298,10 +380,11 @@ button{ font-family: inherit; }
   cursor: pointer;
   transition: background 0.15s ease, transform 0.1s ease;
 }
-.add-cart-btn:hover{ background: var(--ochre-dark); }
+.add-cart-btn:hover{ background: var(--mustard-dark); }
 .add-cart-btn:active{ transform: scale(0.98); }
-.add-cart-btn:focus-visible{ outline: 3px solid var(--pine); outline-offset: 2px; }
-.add-cart-btn.added{ background: var(--pine); }
+.add-cart-btn:focus-visible{ outline: 3px solid var(--grass); outline-offset: 2px; }
+.add-cart-btn.added{ background: var(--grass); }
+.add-cart-btn:disabled{ background: #ccc; cursor: not-allowed; }
 
 /* ---------- Load more ---------- */
 .load-more-wrap{
@@ -320,9 +403,10 @@ button{ font-family: inherit; }
   font-size: 14px;
   font-weight: 600;
   box-shadow: var(--shadow-card);
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
-.btn-outline:hover{ border-color: var(--ochre); color: var(--ochre-dark); }
-.btn-outline:focus-visible{ outline: 3px solid rgba(201, 138, 43, 0.5); outline-offset: 2px; }
+.btn-outline:hover{ border-color: var(--mustard); color: var(--mustard-dark); }
+.btn-outline:focus-visible{ outline: 3px solid rgba(232, 163, 61, 0.55); outline-offset: 2px; }
 
 /* ---------- Cart pill as a button ---------- */
 .cart-pill{
@@ -332,13 +416,13 @@ button{ font-family: inherit; }
   font-family: inherit;
   color: #fff;
 }
-.cart-pill:focus-visible{ outline: 3px solid var(--ochre); outline-offset: 2px; }
+.cart-pill:focus-visible{ outline: 3px solid var(--mustard); outline-offset: 2px; }
 
 /* ---------- Cart overlay ---------- */
 .cart-overlay{
   position: fixed;
   inset: 0;
-  background: rgba(20, 30, 25, 0.45);
+  background: rgba(43, 33, 24, 0.5);
   z-index: 30;
 }
 
@@ -353,7 +437,7 @@ button{ font-family: inherit; }
   z-index: 31;
   display: flex;
   flex-direction: column;
-  box-shadow: -8px 0 24px rgba(20, 30, 25, 0.18);
+  box-shadow: -8px 0 24px rgba(43, 33, 24, 0.2);
 }
 
 /* Our own display:flex/position:fixed above would otherwise cancel out
@@ -370,11 +454,13 @@ button{ font-family: inherit; }
   justify-content: space-between;
   padding: 18px 20px;
   border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, #FDF8EF 0%, var(--surface) 100%);
 }
 .cart-drawer-header h2{
-  font-size: 17px;
+  font-family: var(--font-display);
+  font-size: 18px;
   margin: 0;
-  color: var(--pine-dark);
+  color: var(--grass-dark);
 }
 
 .cart-close-btn{
@@ -388,7 +474,7 @@ button{ font-family: inherit; }
   border-radius: 8px;
 }
 .cart-close-btn:hover{ background: var(--bg); }
-.cart-close-btn:focus-visible{ outline: 3px solid var(--ochre); outline-offset: 1px; }
+.cart-close-btn:focus-visible{ outline: 3px solid var(--mustard); outline-offset: 1px; }
 
 .cart-items-list{
   flex: 1;
@@ -418,7 +504,7 @@ button{ font-family: inherit; }
   height: 56px;
   object-fit: cover;
   border-radius: 8px;
-  background: #F5F7F4;
+  background: #FBEEDD;
 }
 
 .cart-row-info{
@@ -464,8 +550,8 @@ button{ font-family: inherit; }
   align-items: center;
   justify-content: center;
 }
-.qty-btn:hover{ border-color: var(--ochre); color: var(--ochre-dark); }
-.qty-btn:focus-visible{ outline: 3px solid rgba(201, 138, 43, 0.5); outline-offset: 1px; }
+.qty-btn:hover{ border-color: var(--mustard); color: var(--mustard-dark); }
+.qty-btn:focus-visible{ outline: 3px solid rgba(232, 163, 61, 0.55); outline-offset: 1px; }
 .qty-value{
   font-size: 13px;
   min-width: 16px;
@@ -475,13 +561,13 @@ button{ font-family: inherit; }
 .remove-btn{
   background: none;
   border: none;
-  color: var(--brick);
+  color: var(--tomato);
   font-size: 12px;
   cursor: pointer;
   padding: 2px 0;
 }
 .remove-btn:hover{ text-decoration: underline; }
-.remove-btn:focus-visible{ outline: 2px solid var(--brick); outline-offset: 2px; }
+.remove-btn:focus-visible{ outline: 2px solid var(--tomato); outline-offset: 2px; }
 
 .cart-drawer-footer{
   border-top: 1px solid var(--line);
@@ -497,12 +583,123 @@ button{ font-family: inherit; }
   color: var(--ink);
 }
 .cart-total-value{
-  font-size: 19px;
+  font-family: var(--font-display);
+  font-size: 20px;
   font-weight: 700;
-  color: var(--pine-dark);
+  color: var(--tomato);
 }
 
 .cart-clear-btn{ width: 100%; }
+
+/* ---------- Detail Produk Modal ---------- */
+.modal-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 33, 24, 0.55);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-box{
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  max-width: 720px;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: var(--shadow-card);
+}
+
+.modal-close{
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-soft);
+  cursor: pointer;
+  z-index: 2;
+}
+.modal-close:hover{ color: var(--tomato); border-color: var(--tomato); }
+.modal-close:focus-visible{ outline: 3px solid var(--tomato); outline-offset: 2px; }
+
+.modal-content{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.modal-img-wrap{
+  flex: 1 1 280px;
+  background: #FBEEDD;
+}
+.modal-img-wrap img{
+  width: 100%;
+  height: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  display: block;
+}
+
+.modal-info{
+  flex: 1 1 300px;
+  padding: 28px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-title{
+  font-family: var(--font-display);
+  font-size: 20px;
+  margin: 2px 0;
+  color: var(--ink);
+}
+
+.modal-meta-row{
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.modal-price{
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 700;
+  color: var(--tomato);
+}
+
+.modal-stock{
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+  width: fit-content;
+}
+.modal-stock.in-stock{ background: #E4F3E9; color: #1F7A46; }
+.modal-stock.out-of-stock{ background: #FBE7E5; color: var(--tomato-dark); }
+
+.modal-desc{
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 4px 0 6px;
+}
+
+@media (max-width: 480px){
+  .modal-content{ flex-direction: column; }
+}
 
 /* ---------- Responsive ---------- */
 @media (max-width: 720px){
@@ -513,5 +710,5 @@ button{ font-family: inherit; }
 }
 
 @media (prefers-reduced-motion: reduce){
-  *{ transition: none !important; }
+  *, *::before, *::after{ transition: none !important; }
 }
